@@ -23,17 +23,15 @@ Not done
 -- 	Could do Performance test.
 --  Config file existence not checked
 	
+************************************
+MUST READ MUST READ MUST READ
 BUILD:
 -----
     // user java 1.7 because of getLoopbackAddress
 		javac -cp . webserver/*.java
 
-************************************
-MUST READ
-MUST READ: How I have tested so far: 
-MUST READ
-************************************
-
+ HOW I HAVE TESTED SO FAR:
+ --------------------------
 I have used telnet client to check keep-alive feature.
 Until HTTP-Request does not contain "Connection: close" header
 the connection is not closed.
