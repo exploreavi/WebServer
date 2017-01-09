@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<config>
+      <port>12345</port>
+      <threadCount>8</threadCount>
+      <contextRoot>/tmp/</contextRoot>
+      <logPath>/tmp/</logPath>
+      <logFile>WebServer.log</logFile>
+      <logLevel>INFO</logLevel>
+      <caching>Enabled</Caching>
+      <ipaddr>127.0.0.1</ipaddr>
+</config>
