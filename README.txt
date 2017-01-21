@@ -2,7 +2,7 @@ Please forgive my brevity of features. I could do only following in this limited
 
 Done
 --	File WebServer only.
---	CRUD text files.
+--	CRUD operations for ascii files.
 --	Run as non-root only
 --	Bound to localhost loop-back only
 --	Config.xml - few entries used for demonstration.
@@ -10,6 +10,7 @@ Done
 Not done
 --	Synchronize threads for unsafe request(POST, PUT, DELETE). 
 --	Binary files not tested.
+--	Keep Alive timeout not implemented yet.
 --	Multiple-part form not implemented.
 --	Did not use query params though they have been parsed and are available in a hash.
 --	Clients like curl, wget, siege not working for all http methods.
@@ -23,19 +24,32 @@ Not done
 -- 	Could do Performance test.
 --  Config file existence not checked
 	
-************************************
-MUST READ MUST READ MUST READ
+******************************************
+MUST READ SECTION STARTS HERE. PLEASE READ
+******************************************
+
 BUILD:
 -----
-    // user java 1.7 because of getLoopbackAddress
-		javac -cp . webserver/*.java
+// user java 1.7 because of getLoopbackAddress
+1) Go to directory containing directory "webserver".
+2) javac -cp . webserver/*.java
 
- HOW I HAVE TESTED SO FAR:
- --------------------------
-I have used telnet client to check keep-alive feature.
-Until HTTP-Request does not contain "Connection: close" header
-the connection is not closed.
-The connection also gets closed if either server or client terminates.
+RUN:
+----
+1) Go to directory containing directory "webserver".
+2) Execute "java webserver.WebServer".
+
+HOW I HAVE TESTED SO FAR:
+--------------------------
+--> I have used telnet client to test the keep-alive feature. 
+    Because I can create raw request.
+--> Other clients will not work as I have not handled all headers and their values.
+--> HTTP-Request is not closed until request contains "Connection: close" header.
+--> The connection also gets closed if either server or client terminates.
+
+**************
+TEST SCENARIOS:
+**************
 
 SERVER NOT STARTED:
 -------------------
