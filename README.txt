@@ -52,9 +52,12 @@ Escape character is '^]'.
 
 TEST INCORRECT HTTP VERSION:
 ----------------------------
-GET /test.txt HTTP/2.0
-Host:
+GET /test.txt HTTP/2.0↵
+Host:↵
+↵
 
+RESPONSE
+--------
 HTTP/1.1 505 HTTP Version Not Supported
 Content-Length: 0
 Connection: Keep-Alive
@@ -62,7 +65,10 @@ Date: Mon Jan 09 09:12:21 IST 2017
 
 TEST UNSUPPORTED METHOD:
 -----------------------
-TRACE /test.txt HTTP/1.1
+TRACE /test.txt HTTP/1.1↵
+
+RESPONSE
+--------
 HTTP/1.1 501 Not Implemented
 Content-Length: 0
 Connection: Keep-Alive
@@ -70,21 +76,26 @@ Date: Mon Jan 09 09:12:43 IST 2017
 
 GET NON-EXISTING FILE:
 ----------------------
-GET /test.txt HTTP/1.1
-Host: localhost
+GET /test.txt HTTP/1.1↵
+Host: localhost↵
 
+RESPONSE
+--------
 HTTP/1.1 404 File Not Found
 Content-Length: 0
 Connection: Keep-Alive
 Date: Mon Jan 09 09:13:15 IST 2017
 
-CREATED THE FILE:
+CREATE FILE:
 -----------------
-POST /test.txt HTTP/1.1
-Host: localhost
-Content-Length: 13
+POST /test.txt HTTP/1.1↵
+Host: localhost↵
+Content-Length: 13↵
+↵
+hello-world↵
 
-hello-world
+RESPONSE
+--------
 HTTP/1.1 201 Created
 Content-Length: 0
 Connection: Keep-Alive
@@ -92,20 +103,27 @@ Date: Mon Jan 09 09:14:13 IST 2017
 
 TRY UPDATING FILE USING POST(USE PUT INSTEAD):
 ----------------------------
-POST /somefile.txt HTTP/1.1
-Host: localhost
-Content-Length: 13
+POST /somefile.txt HTTP/1.1↵
+Host: localhost↵
+Content-Length: 13↵
+↵
+hello-world↵
 
-hello-worldHTTP/1.1 409 Conflict
+RESPONSE
+--------
+HTTP/1.1 409 Conflict
 Connection: Keep-Alive
 
 USE PUT TO UPDATE THE FILE:
 --------------------------
-PUT /test.txt HTTP/1.1
-Host: localhost
-Content-Length: 13
+PUT /test.txt HTTP/1.1↵
+Host: localhost↵
+Content-Length: 13↵
+↵
+ooooo-oorrr↵
 
-ooooo-oorrr
+RESPONSE
+--------
 HTTP/1.1 200 OK
 Content-Length: 0
 Connection: Keep-Alive
@@ -113,10 +131,13 @@ Date: Mon Jan 09 09:15:04 IST 2017
 
 TRUNCATE THE FILE:
 -----------------
-PUT /test.txt HTTP/1.1
-Host:localhost
-Content-Length: 0
+PUT /test.txt HTTP/1.1↵
+Host:localhost↵
+Content-Length: 0↵
+↵
 
+RESPONSE
+--------
 HTTP/1.1 200 OK
 Content-Length: 0
 Connection: Keep-Alive
@@ -124,11 +145,14 @@ Date: Mon Jan 09 09:21:38 IST 2017
 
 BRING BACK NEW CONTENT:
 ----------------------
-PUT /test.txt HTTP/1.1
-Host:localhost
-Content-Length: 13
+PUT /test.txt HTTP/1.1↵
+Host:localhost↵
+Content-Length: 13↵
+↵
+hello-world↵
 
-hello-world
+RESPONSE
+--------
 HTTP/1.1 200 OK
 Content-Length: 0
 Connection: Keep-Alive
@@ -136,9 +160,12 @@ Date: Mon Jan 09 09:22:09 IST 2017
 
 DELETE THE FILE:
 ---------------
-DELETE /test.txt HTTP/1.1
-Host:
+DELETE /test.txt HTTP/1.1↵
+Host:↵
+↵
 
+RESPONSE
+--------
 HTTP/1.1 200 OK 
 Content-Length: 0
 Connection: Keep-Alive
@@ -146,9 +173,12 @@ Date: Mon Jan 09 09:33:06 IST 2017
 
 TRY DELETING AGAIN:
 ------------------
-DELETE /test.txt HTTP/1.1
-Host:
+DELETE /test.txt HTTP/1.1↵
+Host:↵
+↵
 
+RESPONSE
+--------
 HTTP/1.1 404 File Not Found 
 Content-Length: 0
 Connection: Keep-Alive
@@ -156,10 +186,13 @@ Date: Mon Jan 09 09:33:17 IST 2017
 
 FORBID PUT TO UPDATE A DIRECTORY:
 --------------------------------
-PUT / HTTP/1.1
-Host: localhost
-Content-Length: 13
+PUT / HTTP/1.1↵
+Host: localhost↵
+Content-Length: 13↵
+↵
 
+RESPONSE
+--------
 HTTP/1.1 403 Forbidden 
 Content-Length: 0
 Connection: Keep-Alive
@@ -167,10 +200,12 @@ Date: Mon Jan 09 09:37:10 IST 2017
 
 404 WHEN PUT TRY TO UPDATE NON-EXISTING FILE:
 --------------------------------------------
-PUT /test.txt HTTP/1.1
-Host:
-Content-Length: 13
+PUT /test.txt HTTP/1.1↵
+Host:↵
+Content-Length: 13↵
 
+RESPONSE
+--------
 HTTP/1.1 404 File Not Found 
 Content-Length: 0
 Connection: Keep-Alive
