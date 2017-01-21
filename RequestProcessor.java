@@ -113,6 +113,13 @@ public class RequestProcessor implements Runnable {
 
 	private void sendPostOkResponse() {
 		File f = new File(co.getContextRoot()+hp.getRequestURL());
+		
+		// do not allow post request for a directory
+		if (f.isDirectory() == true) {
+			sendForbiddenResponse();
+			return;
+		}
+
 		// client did not provide the filename to create. Create a filename
 		if (hp.getRequestURL().equals("/")) 
 			f = new File(co.getContextRoot() + "ws" + System.nanoTime());
@@ -232,8 +239,10 @@ public class RequestProcessor implements Runnable {
 			return;
 		}
 		
-		if (f.isDirectory() == true)
+		if (f.isDirectory() == true) {
 			sendForbiddenResponse();
+			return;
+		}
 
 		boolean rc = false;
 		try {
@@ -326,6 +335,12 @@ public class RequestProcessor implements Runnable {
 	private void sendGetOkResponse() {
 		try {
 		File f = new File(co.getContextRoot()+hp.getRequestURL());
+			
+		// do not allow list directory. File should always resolve to a regular file.
+		if (f.isDirectory() == true) {
+			sendForbiddenResponse();
+			return;
+		}
 		if (f.exists() == false) {
 			sendFileNotFound();
 			return;
@@ -362,7 +377,6 @@ public class RequestProcessor implements Runnable {
 	} // end GET OK
 	
 	private void sendHeadOkResponse() {
-		System.out.println("Inside HEAD Response");
 		try {
 			os.write("HTTP/1.1 200 OK\r\n");
 			os.write("Content-Length: 0\r\n");
