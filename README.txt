@@ -6,7 +6,7 @@ Done
 --	Run as non-root only
 --	Bound to localhost loop-back only
 --	Config.xml - few entries used for demonstration.
---      FileNames should resolve to a regular file. Operation on directory would result in "Forbidden".
+--      URI should resolve to a regular file. Operation on directory would result in "Forbidden".
 Not done
 --	Synchronize threads for unsafe request(POST, PUT, DELETE). 
 --	Binary files not tested.
