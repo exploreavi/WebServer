@@ -6,7 +6,7 @@ Done
 --	Run as non-root only
 --	Bound to localhost loop-back only
 --	Config.xml - few entries used for demonstration.
-
+--      FileNames should resolve to a regular file. Operation on directory would result in "Forbidden".
 Not done
 --	Synchronize threads for unsafe request(POST, PUT, DELETE). 
 --	Binary files not tested.
@@ -22,7 +22,8 @@ Not done
 --	What happens if a request results in an exception. Simple, that thread is gone!!
 -- 	Could not write Unit Test cases.
 -- 	Could do Performance test.
---  Config file existence not checked
+--      Config file existence not checked.
+--      Directory listing not implemented.
 	
 ******************************************
 MUST READ SECTION STARTS HERE. PLEASE READ
