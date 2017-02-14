@@ -1,5 +1,3 @@
-Please forgive my brevity of features. I could do only following in this limited time.
-
 Done
 --	File WebServer only.
 --	CRUD operations for ascii files.
