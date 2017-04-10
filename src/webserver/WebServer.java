@@ -1,5 +1,7 @@
 package webserver;
 
+import java.io.File;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -19,22 +21,33 @@ public class WebServer {
 			System.exit(-1);
 		}
 
-		// Create worker threads. These would handle the HTTP request.
-		ExecutorService es = Executors.newFixedThreadPool(80);
 
-		// Use for synchronization
-		Object lock = new Object();
 		ServerSocket ss = null;
+
+    File ff = new File("index.html");
+    if (ff.exists() == true)
+        System.out.println("exists");
+    else
+        System.out.println("not exists");
 
 		try {
 			// Configuration is stored in a XML file. Parse it.
-			ConfigObject co = new ConfigObject("config.xml");
+      if (args.length < 1) {
+        System.err.println("Error: Config filename required as argument");
+        System.err.println("Usage: {program_name} <configFileName>");
+        System.exit(-1);
+      }
+
+			ConfigObject co = new ConfigObject(args[0]);
 			
 			// Enable file type logging
 			Logger l = co.getLogObject();
+
+		  // Create worker threads. These would handle the HTTP request.
+		  ExecutorService es = Executors.newFixedThreadPool(co.getThreadCount());
 			
 			// let the server begin
-			InetAddress lb = InetAddress.getLoopbackAddress();
+			InetAddress lb = InetAddress.getByName(co.getServerIP());
 			ss = new ServerSocket(co.getPort(), 10, lb);
 			l.log(Level.INFO, "Server started on port " + co.getPort());
 			
@@ -42,8 +55,10 @@ public class WebServer {
 				Socket cs = null;
 				cs = ss.accept();
 				l.log(Level.INFO, "New Request arrived from port: " + cs.getPort());
-				es.execute(new RequestProcessor(cs, l, lock, co));
+				es.execute(new RequestProcessor(cs, l, co));
 			}
-		} catch (IOException e) {	}
+		} catch (IOException e) {	
+			System.out.println(e.getMessage());
+		}
 	} // end main
 } // end class

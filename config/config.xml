@@ -1,11 +1,20 @@
 <?xml version="1.0"?>
 <config>
-      <port>12345</port>
-      <threadCount>8</threadCount>
-      <contextRoot>/tmp/</contextRoot>
-      <logPath>/tmp/</logPath>
-      <logFile>WebServer.log</logFile>
-      <logLevel>INFO</logLevel>
-      <caching>Enabled</Caching>
-      <ipaddr>127.0.0.1</ipaddr>
+  <port>12345</port>
+  <threadCount>8</threadCount>
+  <contextRoot>/tmp/</contextRoot>
+  <logPath>/tmp/</logPath>
+  <logFile>WebServer.log</logFile>
+  <logLevel>INFO</logLevel>
+
+  <ipaddr>192.168.0.9</ipaddr>
+
+  <!-- value in milliseconds -->
+  <httpTimeout>10000</httpTimeout>
+
+  <!-- future config -->
+  <maxConnection>80</maxConnection>
+  <caching>Enabled</caching>
+  <cacheType>FD</cacheType>
+  <HA>yes</HA>
 </config>

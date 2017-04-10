@@ -17,6 +17,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+// make it a inner class
 public class ConfigObject {
 	public ConfigObject(String configFileName) {
 		initConfig(configFileName);
@@ -28,18 +29,22 @@ public class ConfigObject {
 	private String logLevel;
 	private String contextRoot;
 	private Logger l;
+  private int threadCount;
+  private String serverIP;
+  private long httpTimeout;
 
 	// All setter except port and ip could be used to changes config without restarting the server
+
+  public long getHttpTimeout() {
+    return this.httpTimeout;
+  }
+
 	public Logger getLogObject() {
 		return l;
 	}
 
 	public String getContextRoot() {
 		return contextRoot;
-	}
-
-	public void setContextRoot(String contextRoot) {
-		this.contextRoot = contextRoot;
 	}
 
 	public int getPort() {
@@ -50,28 +55,28 @@ public class ConfigObject {
 		return logPath;
 	}
 
-	public void setLogPath(String logPath) {
-		this.logPath = logPath;
-	}
-
 	public String getLogFile() {
 		return logFile;
-	}
-
-	public void setLogFile(String logFile) {
-		this.logFile = logFile;
 	}
 
 	public String getLogLevel() {
 		return logLevel;
 	}
 
-	public void setLogLevel(String logLevel) {
-		this.logLevel = logLevel;
-	}
+  public int getThreadCount() {
+      return threadCount;
+  }
+
+  public String getServerIP() {
+      return serverIP;
+  }
 
 	private void initConfig(String configFile) {
 		File inputFile = new File(configFile);
+    if (!inputFile.exists()) {
+      System.err.println("Error: Config file \"" + inputFile + "\"" + " does not exist.!!!");
+      System.exit(-2);
+    }
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = null;
 		try {
@@ -83,6 +88,7 @@ public class ConfigObject {
 			doc = dBuilder.parse(inputFile);
 		} catch (SAXException e) {
 		} catch (IOException e) {
+      e.printStackTrace();
 		}
 		doc.getDocumentElement().normalize();
 		NodeList nList = doc.getElementsByTagName("config");
@@ -99,6 +105,13 @@ public class ConfigObject {
 				this.contextRoot = eElement.getElementsByTagName("contextRoot").item(0).getTextContent();
 
 				this.logFile = eElement.getElementsByTagName("logFile").item(0).getTextContent();
+
+				this.serverIP = eElement.getElementsByTagName("ipaddr").item(0).getTextContent();
+
+				this.threadCount = Integer.parseInt(eElement.getElementsByTagName("threadCount").item(0).getTextContent());
+
+				this.httpTimeout = Long.parseLong(eElement.getElementsByTagName("httpTimeout").item(0).getTextContent());
+
 			} // end if
 		} // end for
 

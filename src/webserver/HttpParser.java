@@ -4,12 +4,15 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.SocketTimeoutException;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class HttpParser {
 	private static final String[][] HttpReplies = { { "100", "Continue" }, { "101", "Switching Protocols" },
@@ -31,22 +34,31 @@ public class HttpParser {
 	private String method, url;
 	private Hashtable headers, params;
 	private int[] ver;
+	private Logger l;
 
-	public HttpParser(InputStream is) {
-		reader = new BufferedReader(new InputStreamReader(is));
+	public HttpParser(InputStream is, Logger l) {
+		this.reader = new BufferedReader(new InputStreamReader(is));
 		method = "";
 		url = "";
 		headers = new Hashtable();
 		params = new Hashtable();
 		ver = new int[2];
+		this.l = l;
 	}
 
 	public int parseRequest() throws IOException {
-		String initial, prms[], cmd[], temp[];
+		String initial = null, prms[], cmd[], temp[];
 		int ret, idx, i;
-		
+		l.log(Level.INFO, "Entered into parser");
 		ret = 200; // default is OK now
-		initial = reader.readLine();
+		try {
+			initial = reader.readLine();
+			l.log(Level.INFO, "initial");
+		} catch(SocketTimeoutException st) {
+			System.out.println("Timed-out");
+			return 101;
+		}
+		
 		if (initial == null || initial.length() == 0)
 			return 0;
 		if (Character.isWhitespace(initial.charAt(0))) {
