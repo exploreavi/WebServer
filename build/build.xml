@@ -1,0 +1,31 @@
+<project default = "createJar" name ="WebSever" basedir="." > 
+
+  <description> 
+    Build WebServer Project
+  </description>
+
+  <property file="build.properties" />
+
+  <target name="createJar" depends ="compile">
+    <echo> Creating jar file </echo>
+    <jar destfile="${jarFileName}" basedir="${binDest}" manifest="manifest" includes="**/*.class"> </jar>
+  </target>
+
+  <target name = "compile" depends ="createDir"> 
+  <echo> Now Compiling!!!! </echo>
+    <javac includeantruntime="false" srcdir="${srcDir}" destdir="${binDest}" includes="**/*.java"/>
+  </target>
+
+  <target name="createDir">
+  <echo> Creating bin Directories </echo>
+    <mkdir dir = "${binDest}" />
+    <mkdir dir = "${jarDest}" />
+  </target>
+
+  <target name = "delete">
+  <echo> "Deleting now!!!!!!!!! </echo>
+    <delete dir ="${binDest}" includes="**/*.class"></delete>
+    <delete dir ="${jarDest}" includes="ws.jar"></delete>
+  </target>
+
+</project>
