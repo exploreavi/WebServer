@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class WebServer {
-
+  static Logger l;
 	public static void main(String[] args) {
 
 		// need to take care of users who are member of root group
@@ -21,14 +21,7 @@ public class WebServer {
 			System.exit(-1);
 		}
 
-
 		ServerSocket ss = null;
-
-    File ff = new File("index.html");
-    if (ff.exists() == true)
-        System.out.println("exists");
-    else
-        System.out.println("not exists");
 
 		try {
 			// Configuration is stored in a XML file. Parse it.
@@ -41,7 +34,7 @@ public class WebServer {
 			ConfigObject co = new ConfigObject(args[0]);
 			
 			// Enable file type logging
-			Logger l = co.getLogObject();
+		  l = co.getLogObject();
 
 		  // Create worker threads. These would handle the HTTP request.
 		  ExecutorService es = Executors.newFixedThreadPool(co.getThreadCount());
@@ -58,7 +51,7 @@ public class WebServer {
 				es.execute(new RequestProcessor(cs, l, co));
 			}
 		} catch (IOException e) {	
-			System.out.println(e.getMessage());
+			l.log(Level.INFO, e.getMessage());
 		}
 	} // end main
 } // end class

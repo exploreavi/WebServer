@@ -72,18 +72,9 @@ public class RequestProcessor implements Runnable {
 			rc = 0;
 			l.log(Level.INFO, "Waiting for request to parse");
 			try {
-				if (0 != cis.available())
-					System.out.println("cis");
-			} catch (IOException e1) {
-				System.out.println("not available");
-				e1.printStackTrace();
-			}
-
-			try {
 				rc = hp.parseRequest();
 			} catch (IOException e) {
 			}
-			System.out.println("Parser returned " + rc);
 			switch (rc) {
 			case 0: // connection closed by client
 				break;
@@ -187,7 +178,7 @@ public class RequestProcessor implements Runnable {
 		}
 
 		try {
-			os.write("HTTP/1.1 201 Created \r\n");
+			os.write("HTTP/2.0 201 Created \r\n");
 			os.write("Content-Length: 0\r\n");
 			os.write("Connection: Keep-Alive\r\n");
 			os.write("Date: " + getDateInHttpFormat() + "\r\n");
@@ -200,7 +191,7 @@ public class RequestProcessor implements Runnable {
 
 	private void sendConflictResponse() {
 		try {
-			os.write("HTTP/1.1 409 Conflict \r\n");
+			os.write("HTTP/2.0 409 Conflict \r\n");
 			os.write("Connection: Keep-Alive\r\n");
 			os.write("\r\n\r\n");
 			os.flush();
@@ -250,7 +241,7 @@ public class RequestProcessor implements Runnable {
 				sendServerInternalErrorResponse();
 			}
 			try {
-				os.write("HTTP/1.1 200 OK \r\n");
+				os.write("HTTP/2.0 200 OK \r\n");
 				os.write("Content-Length: 0\r\n");
 				os.write("Connection: Keep-Alive\r\n");
 				os.write("Date: " + getDateInHttpFormat() + "\r\n");
@@ -278,7 +269,7 @@ public class RequestProcessor implements Runnable {
 		try {
 			rc = f.delete();
 			if (rc == true) {
-				os.write("HTTP/1.1 200 OK \r\n");
+				os.write("HTTP/2.0 200 OK \r\n");
 				os.write("Content-Length: 0\r\n");
 				os.write("Connection: Keep-Alive\r\n");
 				os.write("Date: " + getDateInHttpFormat() + "\r\n");
@@ -293,7 +284,7 @@ public class RequestProcessor implements Runnable {
 
 	private void sendForbiddenResponse() {
 		try {
-			os.write("HTTP/1.1 403 Forbidden \r\n");
+			os.write("HTTP/2.0 403 Forbidden \r\n");
 			os.write("Content-Length: 0\r\n");
 			os.write("Connection: Keep-Alive\r\n");
 			os.write("Date: " + getDateInHttpFormat() + "\r\n");
@@ -306,7 +297,7 @@ public class RequestProcessor implements Runnable {
 
 	private void sendFileNotFound() {
 		try {
-			os.write("HTTP/1.1 404 File Not Found \r\n");
+			os.write("HTTP/2.0 404 File Not Found \r\n");
 			os.write("Content-Length: 0\r\n");
 			os.write("Connection: Keep-Alive\r\n");
 			os.write("Date: " + getDateInHttpFormat() + "\r\n");
@@ -319,11 +310,14 @@ public class RequestProcessor implements Runnable {
 
 	private void sendUnsupportedHttpVersion() {
 		try {
-			os.write("HTTP/1.1 505 HTTP Version Not Supported\r\n");
-			os.write("Content-Length: 0\r\n");
+      String msg = "Check if you are a HTTP version 2.0 supported client";
+      long contentLength = msg.length() + 1;
+			os.write("HTTP/2.0 505 HTTP Version Not Supported\r\n");
+			os.write("Content-Length:" + contentLength + "\r\n");
 			os.write("Connection: Keep-Alive\r\n");
 			os.write("Date: " + getDateInHttpFormat() + "\r\n");
 			os.write("\r\n\r\n");
+      os.write(msg);
 			os.flush();
 		} catch (IOException e) {
 			sendServerInternalErrorResponse();
@@ -332,7 +326,7 @@ public class RequestProcessor implements Runnable {
 
 	private void sendMethodNotImplemented() {
 		try {
-			os.write("HTTP/1.1 501 Not Implemented \r\n");
+			os.write("HTTP/2.0 501 Not Implemented \r\n");
 			os.write("Content-Length: 0\r\n");
 			os.write("Date: " + getDateInHttpFormat() + "\r\n");
 			os.write("Connection: Keep-Alive\r\n");
@@ -345,7 +339,7 @@ public class RequestProcessor implements Runnable {
 
 	private void sendBadRequestResponse() {
 		try {
-			os.write("HTTP/1.1 400 Bad Request\r\n");
+			os.write("HTTP/2.0 400 Bad Request\r\n");
 			os.write("Content-Length: 0\r\n");
 			os.write("Connection: Keep-Alive\r\n");
 			os.write("Date: " + getDateInHttpFormat() + "\r\n");
@@ -366,15 +360,20 @@ public class RequestProcessor implements Runnable {
         if (!f.canRead()) {
           sendForbiddenResponse();
           return;
-        }
-        else {
-					File ff = new File(co.getContextRoot() + hp.getRequestURL()+"index.html");
-					if (ff.exists())
-						//serve this index.html
-					else
-						// serve packaged index.htm;
-        }
+        } else {
+					String msg = "I won't send index.html.Na na na na na!!\n Give a filename in the URL";
+					long contentLength = msg.length() + 1;
+					os.write("HTTP/2.0 200 OK\r\n");
+					os.write("Content-Type: text/html\r\n");
+					os.write("Content-Length:" + contentLength + "\r\n");
+					os.write("Connection: Keep-Alive\r\n");
+					os.write("Date: " + getDateInHttpFormat() + "\r\n");
+					os.write("\r\n\r\n");
+					os.write(msg);
+					os.flush();
+					return;
 			}
+		} // end check if path is a directory
 			if (f.exists() == false) {
 				sendFileNotFound();
 				return;
@@ -389,21 +388,17 @@ public class RequestProcessor implements Runnable {
 			}
 			
 			long contentLength = f.length() + 1;
-			os.write("HTTP/1.1 200 OK\r\n");
+			os.write("HTTP/2.0 200 OK\r\n");
 			os.write("Content-Type: text/html\r\n");
 			os.write("Content-Length:" + contentLength + "\r\n");
-			System.out.println(f.length());
 			os.write("Connection: Keep-Alive\r\n");
-//			os.write("Date: " + getDateInHttpFormat() + "\r\n");
+      os.write("Date: " + getDateInHttpFormat() + "\r\n");
 			os.write("\r\n\r\n");
 			os.flush();
-//			long total_length = f.length() + "HTTP/1.1 200 OK\r\n".length() + "Content-Length:".length() + 2 + "Connection: Keep-Alive\r\n".length()
-//					+ "\r\n\r\n".length();
 
 			String line = br.readLine();
 
 			while (line != null) {
-				System.out.println(line);
 				os.write(line+"\n");
 				line = br.readLine();
 			}
@@ -417,7 +412,7 @@ public class RequestProcessor implements Runnable {
 
 	private void sendHeadOkResponse() {
 		try {
-			os.write("HTTP/1.1 200 OK\r\n");
+			os.write("HTTP/2.0 200 OK\r\n");
 			os.write("Content-Length: 0\r\n");
 			os.write("Connection: Keep-Alive\r\n");
 			os.write("Date: " + getDateInHttpFormat() + "\r\n");
@@ -429,7 +424,7 @@ public class RequestProcessor implements Runnable {
 
 	private void sendServerInternalErrorResponse() {
 		try {
-			os.write("HTTP/1.1 500 Internal Server Error \r\n");
+			os.write("HTTP/2.0 500 Internal Server Error \r\n");
 			os.write("Content-Length: 0\r\n");
 			os.write("Connection: Keep-Alive\r\n");
 			os.write("Date: " + getDateInHttpFormat() + "\r\n");

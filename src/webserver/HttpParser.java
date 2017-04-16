@@ -55,7 +55,7 @@ public class HttpParser {
 			initial = reader.readLine();
 			l.log(Level.INFO, "initial");
 		} catch(SocketTimeoutException st) {
-			System.out.println("Timed-out");
+			l.log(Level.INFO, "Timed-out");
 			return 101;
 		}
 		
@@ -82,7 +82,8 @@ public class HttpParser {
 		} else
 			ret = 400;
 		
-		if(ver[0] != 1 || ver[1] > 1)
+		// if(ver[0] != 1 || ver[1] > 1)
+		if(ver[0] != 2 && ver[1] != 0)
 			ret = 505;
 		
 		if (cmd[0].equals("GET") || cmd[0].equals("HEAD") || cmd[0].equals("POST") || cmd[0].equals("PUT")
